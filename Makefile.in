@@ -5,8 +5,10 @@ CXX ?= g++
 CXXFLAGS ?=
 AR ?= ar
 RUSTC ?= rustc
-RUSTFLAGS ?=
+RUSTDOC ?= rustdoc
+RUSTFLAGS ?= -L target/deps
 EXT_DEPS ?=
+DOC_TARGET ?= doc
 
 RUST_SRC=$(shell find $(VPATH)/. -type f -name '*.rs')
 
@@ -27,6 +29,12 @@ check: cssparser-test
 .PHONY: check-debug
 check-debug: cssparser-tests
 	echo -e "start\n break upcall_fail\n continue\n where\n continue" | gdb -q ./cssparser-tests
+
+.PHONY:
+doc: $(DOC_TARGET)/cssparser/index.html
+
+$(DOC_TARGET)/cssparser/index.html: lib.rs $(RUST_SRC) $(EXT_DEPS)
+	$(RUSTDOC) $(RUSTFLAGS) -o $(DOC_TARGET) $<
 
 .PHONY: clean
 clean:
